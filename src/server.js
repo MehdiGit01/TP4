@@ -25,6 +25,7 @@ fastify.get('/dmz', {}, (req, res) => {
 })
 
 fastify.after(() => {
+    // Route '/secu' avec authentification
     fastify.route({
         method: 'GET',
         url: '/secu',
@@ -34,8 +35,20 @@ fastify.after(() => {
                 replique: 'Un Lannister paye toujours ses dettes !'
             }
         }
-    })
-})
+    });
+
+    // Route '/autre' sans authentification
+    fastify.route({
+        method: 'GET',
+        url: '/autre',
+        handler: async (req, reply) => {
+            return {
+                message: 'un Lannister paye sans authentification.'
+            }
+        }
+    });
+});
+
 
 fastify.setErrorHandler(function (err, req, reply) {
 
