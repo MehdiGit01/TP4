@@ -1,5 +1,14 @@
 import Fastify from "fastify"
 import fastifyBasicAuth from "@fastify/basic-auth"
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const key = readFileSync(join(__dirname, 'server.key'));
+
 
 
 const port = 3000;
@@ -67,3 +76,27 @@ fastify.listen({port}, function (err, address) {
 
     fastify.log.info(`Fastify is listening on port: ${address}`);
 });
+
+
+const myFastify = Fastify({ https: {
+        key: readFileSync('server.key'),
+        cert: readFileSync('server.crt')
+    }});
+
+
+
+fastify.get('/', async (request, reply) => {
+    return { hello: 'world' };
+});
+
+const start = async () => {
+    try {
+        await fastify.listen(3000);
+        console.log('Server listening on port 3000');
+    } catch (err) {
+        console.error(err);
+        process.exit(1);
+    }
+};
+
+start();
